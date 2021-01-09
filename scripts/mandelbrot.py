@@ -1,26 +1,16 @@
+# Generate Mandelbrot set
 from PIL import Image
 import colorsys
 import math
 import os
 
-# Define some functions to set our colors
-def logColor(distance, base, const, scale):
-    color = -1 * math.log(distance, base)
-    rgb = colorsys.hsv_to_rgb(const + scale * color,0.8,0.9)
-    return tuple(round(i * 255) for i in rgb)
-
-def powerColor(distance, exp, const, scale):
-    color = distance**exp
-    rgb = colorsys.hsv_to_rgb(const + scale * color,1 - 0.6 * color,0.9)
-    return tuple(round(i * 255) for i in rgb)
-
 def drawBrot(xc, yc, domain):
     # Define some constants
     # Number of pixels in our image
-    imageLength = 1000
-    imageHeight = 750
+    imageLength = 1600
+    imageHeight = 1200
     # Used to determine if series diverges
-    iterations = 500
+    iterations = 700
     testDistance = 4
 
     # Calculate the rest of our constants
@@ -58,13 +48,16 @@ def drawBrot(xc, yc, domain):
                     break
 
             # If we exited the loop early, our series diverged
-            if i <= iterations:
+            if i < iterations:
                 # Get fraction of loop we completed. Higher values
                 # mean slower divergence
-                fraction = i/iterations
-                color = powerColor(fraction, 0.2, 0.27, 1.0)
-                pixels[col,row] = color
-        
+                fraction = (i+1)/iterations
+                hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
+                saturation = 0.7   # Amount of grey - zero is all grey, one is no grey
+                value = 1        # Brightness, zero is black, 1 is full brightness
+                rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(hue,saturation,value))
+                # Set the pixel to the color we calculated
+                pixels[col,row] = rgb                      
     # Shows image in a separate window
     img.show()  
     # Shows image inline
