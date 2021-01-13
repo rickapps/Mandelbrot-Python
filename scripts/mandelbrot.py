@@ -1,16 +1,17 @@
-# Generate Mandelbrot set
+# Generate Mandelbrot set. Return it as a string
+# that can be passed to an html img tag
 from PIL import Image
 import colorsys
-import math
-import os
+from io import BytesIO
+from base64 import b64encode
 
 def drawBrot(xc, yc, domain):
     # Define some constants
     # Number of pixels in our image
-    imageLength = 1600
-    imageHeight = 1200
+    imageLength = 400
+    imageHeight = 300
     # Used to determine if series diverges
-    iterations = 700
+    iterations = 100
     testDistance = 4
 
     # Calculate the rest of our constants
@@ -57,13 +58,18 @@ def drawBrot(xc, yc, domain):
                 value = 1        # Brightness, zero is black, 1 is full brightness
                 rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(hue,saturation,value))
                 # Set the pixel to the color we calculated
-                pixels[col,row] = rgb                      
+                pixels[col,row] = rgb 
+    pngImage = BytesIO()
+    img.save(pngImage, 'PNG')
+    # Encode PNG image to base64 string
+    pngImageB64String = "data:image/png;base64,"
+    pngImageB64String += b64encode(pngImage.getvalue()).decode('utf8')
+    return pngImageB64String                     
     # Shows image in a separate window
-    img.show()  
+    #img.show()  
     # Shows image inline
     #imshow(np.asarray(img))  
     #img.save('output.png')
-    #os.system('open output.png')  
 
 if __name__== "__main__":
   drawBrot(-0.65, 0.0, 3.4)      
