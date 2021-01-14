@@ -12,4 +12,30 @@ body {
 
 .container {
   height: 100%;
+  margin: 0, auto;
 }
+
+#containment-wrapper {
+  padding: 0px; 
+  cursor:zoom-in;
+  width: 720px;
+  height: 540px;
+}
+#containment-wrapper img {
+  width: 720px;
+  height: 540px;
+}
+#containment-wrapper h2 {
+  color: white;
+}
+.selector {
+  width: 240px; 
+  height: 180px; 
+  margin: 0; 
+  border:2px; 
+  border-style: dotted; 
+  color: red; 
+  cursor:move;
+  text-align: center;
+}
+
