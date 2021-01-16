@@ -12,10 +12,11 @@ body {
 
 .container {
   height: 100%;
-  margin: 0, auto;
+  margin: 0 auto;
 }
 
 #containment-wrapper {
+  margin: 0 auto;
   padding: 0px; 
   cursor:zoom-in;
   width: 720px;
@@ -29,6 +30,9 @@ body {
   color: white;
 }
 .selector {
+  position: relative;
+  left: 240px;
+  top: -360px;
   width: 240px; 
   height: 180px; 
   margin: 0; 

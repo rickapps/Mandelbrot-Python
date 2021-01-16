@@ -3,7 +3,7 @@ from mandelbrot import drawBrot
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET","POST"])
 def plotView():
   
     pngImageB64String = drawBrot(-0.65, 0.0, 3.4)      

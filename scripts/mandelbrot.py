@@ -8,8 +8,8 @@ from base64 import b64encode
 def drawBrot(xc, yc, domain):
     # Define some constants
     # Number of pixels in our image
-    imageLength = 400
-    imageHeight = 300
+    imageLength = 720
+    imageHeight = 540
     # Used to determine if series diverges
     iterations = 100
     testDistance = 4
