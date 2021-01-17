@@ -7,7 +7,8 @@ from base64 import b64encode
 
 def drawBrot(xc, yc, domain):
     # Define some constants
-    # Number of pixels in our image
+    # Number of pixels in our image.
+    # If you change the aspect ratio, change style.css 
     imageLength = 720
     imageHeight = 540
     # Used to determine if series diverges
