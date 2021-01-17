@@ -1,3 +1,14 @@
+:root {
+  --picHeight: 540px;
+  --picWidth: 720px;
+  --selectHeight: 180px;
+  --selectWidth: 240px;
+  /* Position the top left of selection box here */
+  /* to center it over our pic                   */
+  --xcenter: 240px;     /* 0 + 720/2 - 240/2 = 240 */
+  --ycenter: -360px;    /* -540 + 540/2 - 180/2 = -360 */
+}
+
 html,
 body {
   height: 100%;
@@ -19,22 +30,22 @@ body {
   margin: 0 auto;
   padding: 0px; 
   cursor:zoom-in;
-  width: 720px;
-  height: 540px;
+  width: var(--picWidth);
+  height: var(--picHeight);
 }
 #containment-wrapper img {
-  width: 720px;
-  height: 540px;
+  width: var(--picWidth);
+  height: var(--picHeight);
 }
 #containment-wrapper h2 {
   color: white;
 }
 .selector {
   position: relative;
-  left: 240px;
-  top: -360px;
-  width: 240px; 
-  height: 180px; 
+  left: var(--xcenter);
+  top: var(--ycenter);
+  width: var(--selectWidth); 
+  height: var(--selectHeight); 
   margin: 0; 
   border:2px; 
   border-style: dotted; 

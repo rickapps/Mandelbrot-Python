@@ -20,10 +20,11 @@ $(function() {
       var pos = box.position();
       var wid = box.width();
       var height = box.height();
-      // $('#xtopLeft').val(box.position().left);
-      // $('#ytopLeft').val(box.position().top);
-      // $('#xcenter').val(box.position().left + box.outerwidth()/2);
-      // $('#ycenter').val(box.position().top - box.outerheight()/2);
     });
+    var box = $('#selection-box');
+    $('#xtopLeft').val(box.position().left);
+    $('#ytopLeft').val(box.position().top);
+    $('#xcenter').val(box.position().left + box.outerWidth()/2);
+    $('#ycenter').val(box.position().top - box.outerHeight()/2);
   });
   
