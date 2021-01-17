@@ -1,4 +1,5 @@
 :root {
+  /* If pic aspect ratio changes from 4/3 you should also change mandelbrot.py */
   --picHeight: 540px;
   --picWidth: 720px;
   --selectHeight: 180px;
