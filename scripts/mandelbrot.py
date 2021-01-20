@@ -27,7 +27,7 @@ class Mandelbrot:
         # Input coords are in terms of pixels. ycenter is
         # negative at top of screen, zero at bottom.
         self.xc = self.xMin + (xcenter * self.xScale)
-        self.yc = self.yMax + (ycenter * self.yScale)
+        self.yc = self.yMin + (ycenter * self.yScale)
         # Get our new domain
         self.domain = 2 * (xcenter - xcorner) * self.xScale
         # Calculate new scale factors based on our new domain
@@ -39,9 +39,9 @@ class Mandelbrot:
         # Use aspect ratio to figure out yRange
         yRange = self.domain * Mandelbrot._imageHeight / Mandelbrot._imageLength 
         self.xMin = self.xc - self.domain/2.0
-        self.yMax = self.yc + yRange/2.0
+        self.yMin = self.yc - yRange/2.0
         self.xScale = self.domain/Mandelbrot._imageLength
-        self.yScale = self.xScale #(Equivalent to: yRange/Mandelbrot._imageHeight)
+        self.yScale = -self.xScale #(Equivalent to: yRange/Mandelbrot._imageHeight)
         return
 
     def makeImage(self):
@@ -54,8 +54,9 @@ class Mandelbrot:
             for col in range(Mandelbrot._imageLength):
                 # Convert to (x,y) coords. (row, col) starts at top left
                 # We want min (x,y) to be at bottom left
+                srow = row - (Mandelbrot._imageHeight - 1)
                 xComplex = self.xMin + col * self.xScale
-                yComplex = self.yMax - row * self.yScale
+                yComplex = self.yMin + srow * self.yScale
                 # We are going to generate our series using this value as our constant.
                 # It is a complex number (a+bi) defined as (xComplex, yComplex)
                 # We will generate up to iterations terms of the series for
@@ -80,7 +81,8 @@ class Mandelbrot:
                     hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
                     rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(
                         hue, Mandelbrot._saturation, Mandelbrot._brightness))
-                    # Set the pixel to the color we calculated
+                    # Set the pixel to the color we calculated. We use row here instead
+                    # of srow so our image is not up-side-down.
                     pixels[col,row] = rgb 
         pngImage = BytesIO()
         img.save(pngImage, 'PNG')
