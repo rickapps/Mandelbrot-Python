@@ -18,32 +18,30 @@ class Mandelbrot:
         self.xc = xc
         self.yc = yc
         self.domain = domain
-        self.xMin = 0
-        self.yMax = 0
-        self.xScale = 0
-        self.yScale = 0
         # Calculate xMin, yMax, xScale, yScale
         self.setScale()
         return
 
     def zoom(self, xcorner, ycorner, xcenter, ycenter):
         'Zoom in on existing image and replot.'
-        self.xc = self.xMin + xcenter * self.xScale
-        self.yc = self.yMax - ycenter * self.yScale
-        xtemp = self.xMin + xcorner * self.xScale
-        self.domain = 2 * (xcenter - xtemp) * self.xScale
+        # Input coords are in terms of pixels. ycenter is
+        # negative at top of screen, zero at bottom.
+        self.xc = self.xMin + (xcenter * self.xScale)
+        self.yc = self.yMax + (ycenter * self.yScale)
+        # Get our new domain
+        self.domain = 2 * (xcenter - xcorner) * self.xScale
         # Calculate new scale factors based on our new domain
         self.setScale()
         return
 
 
     def setScale(self):
-        aspectRatio = Mandelbrot._imageLength / Mandelbrot._imageHeight
-        yRange = self.domain / aspectRatio
-        self.xMin = self.xc - self.domain/2
-        self.yMax = self.yc + yRange/2
+        # Use aspect ratio to figure out yRange
+        yRange = self.domain * Mandelbrot._imageHeight / Mandelbrot._imageLength 
+        self.xMin = self.xc - self.domain/2.0
+        self.yMax = self.yc + yRange/2.0
         self.xScale = self.domain/Mandelbrot._imageLength
-        self.yScale = yRange/Mandelbrot._imageHeight
+        self.yScale = self.xScale #(Equivalent to: yRange/Mandelbrot._imageHeight)
         return
 
     def makeImage(self):
