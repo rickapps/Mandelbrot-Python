@@ -17,6 +17,10 @@ $(function() {
       $('#ycenter').val(ui.position.top + $(this).outerHeight()/2);
     });
 
+    $('#magnify').submit(function(e){
+      $('.spinner-grow').show();
+    });
+
     $("#containment-wrapper").mouseover(function(){$("#selection-box h2").show()});
     $("#containment-wrapper").mouseout(function(){$("#selection-box h2").hide()});
 
@@ -29,5 +33,7 @@ $(function() {
     $('#ytopLeft').val(top);
     $('#xcenter').val(left + box.outerWidth()/2);
     $('#ycenter').val(top + box.outerHeight()/2);
+    $("#selection-box h2").hide();
+    $('.spinner-grow').hide();
   });
   

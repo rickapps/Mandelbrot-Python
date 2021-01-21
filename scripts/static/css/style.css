@@ -55,3 +55,8 @@ body {
   text-align: center;
 }
 
+.spinner-grow {
+  width: 8rem; 
+  height: 8rem;  
+}
+

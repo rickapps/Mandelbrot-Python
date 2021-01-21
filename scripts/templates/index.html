@@ -21,7 +21,12 @@
     <h1>Mandelbrot Set</h1>
     <div id='containment-wrapper'>
       <img src="{{ image }}"/>
-      <div id='selection-box' class='selector'><h2>Select area to enlarge</h2></div>
+      <div id='selection-box' class='selector'>
+        <h2>Select area to enlarge</h2>
+        <div class="spinner-grow mt-4" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
     </div>
     <form id='magnify' method="POST" action="/">
       <input id='xtopLeft' name='xtopLeft' type="hidden">
@@ -31,7 +36,7 @@
       <input id='xc' name='xc' type='hidden' value={{ xc }}>
       <input id='yc' name='yc' type='hidden' value={{ yc }}>
       <input id='xDomain' name='xDomain' type='hidden' value={{ xDomain }}>
-      <input id='submit' type="submit" class="btn btn-lg btn-info m-2" value="Magnify">
+      <button id='submit' type="submit" class="btn btn-lg btn-info m-2">Magnify</button>
     </form>
     </div>
 </div>
