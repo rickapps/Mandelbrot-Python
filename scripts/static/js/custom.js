@@ -18,12 +18,24 @@ $(function() {
     });
 
     $('#magnify').submit(function(e){
+      $('#containment-wrapper').off();
+      $('#selection-box').off();
+      $('#selection-box h2').hide();
       $('.spinner-grow').show();
     });
 
-    $("#containment-wrapper").mouseover(function(){$("#selection-box h2").show()});
-    $("#containment-wrapper").mouseout(function(){$("#selection-box h2").hide()});
-
+    $('#containment-wrapper').on({
+      mouseenter: function(){
+        $("#selection-box h2").show();
+      },
+      mouseleave: function(){
+        $("#selection-box h2").hide();
+      },
+      dblclick(){
+        $('#submit').click();
+      }
+    });
+  
     // To be done on document ready. Using css to get
     // values as position method does not seem to be accurate.
     var box = $('#selection-box');
