@@ -21,16 +21,25 @@ def plotView():
         ycenter = request.form.get("ycenter", type=float)
         # Zoom in on the area the user requested
         plot.zoom(xcorner, ycorner, xcenter, ycenter)
+        thePlot = plot.makeImage()
+        xc = plot.xc
+        yc = plot.yc
+        domain = plot.domain
     else:  
         # Display the default plot
-        plot = Mandelbrot(-0.65, 0.0, 3.4)
+        #plot = Mandelbrot(-0.65, 0.0, 3.4)
+        # To make the initial display faster, we will just
+        # load an image.
+        xc = -0.65
+        yc = 0.0
+        domain = 3.4
+        thePlot = 'static/img/mandelbrot.png'
 
-    # Save our values to use on our next plot
-    thePlot = plot.makeImage()
+    # Display our image and store values for the next plot
     return render_template("index.html", 
-        xc=plot.xc,
-        yc=plot.yc,
-        xDomain=plot.domain,
+        xc=xc,
+        yc=yc,
+        xDomain=domain,
         image=thePlot)
 
 @app.route("/<int:n>", methods=["GET"])

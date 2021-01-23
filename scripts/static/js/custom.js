@@ -17,7 +17,7 @@ $(function() {
       $('#ycenter').val(ui.position.top + $(this).outerHeight()/2);
     });
 
-    $('#magnify').submit(function(e){
+    $('#submit').click(function(e){
       $('#containment-wrapper').off();
       $('#selection-box').off();
       $('#selection-box h2').hide();
