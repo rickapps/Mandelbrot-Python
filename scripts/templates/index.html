@@ -15,7 +15,16 @@
     <script src='{{url_for('static', filename='js/jquery.ui.touch-punch.js')}}'></script>
     <title>Mandelbrot Set</title>
   </head>
-
+  {% set curPage = session['page'] %}
+  {% set pages = session['xc']|count %}
+  {% set prevDisable = '' %}
+  {% set nextDisable = '' %}
+  {% if curPage +1 >= pages %}
+  {% set nextDisable = 'disabled' %}
+  {% endif %}
+  {% if curPage == 0 %}
+  {% set prevDisable = 'disabled' %}
+  {% endif %}
   <body class="text-center">
     <div class="container">
     <div class="row h-100">
@@ -38,7 +47,16 @@
       <input id='xc' name='xc' type='hidden' value={{ xc }}>
       <input id='yc' name='yc' type='hidden' value={{ yc }}>
       <input id='xDomain' name='xDomain' type='hidden' value={{ xDomain }}>
+      <a class="btn btn-lg btn-info m-2 text-left {{ prevDisable }}" href="/page/{{ curPage-1 }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
       <button id='submit' type="submit" class="btn btn-lg btn-info m-2">Magnify</button>
+      <a class="btn btn-lg btn-info m-2 text-right {{ nextDisable }}" href="/page/{{ curPage+1 }}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+
     </form>
     </div>
 </div>
