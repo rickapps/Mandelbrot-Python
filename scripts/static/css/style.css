@@ -34,13 +34,16 @@ body {
   width: var(--picWidth);
   height: var(--picHeight);
 }
+
 #containment-wrapper img {
   width: var(--picWidth);
   height: var(--picHeight);
 }
+
 #containment-wrapper h2 {
   color: white;
 }
+
 .selector {
   position: relative;
   left: var(--xcenter);
