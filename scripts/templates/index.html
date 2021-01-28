@@ -25,14 +25,22 @@
   {% if curPage == 0 %}
   {% set prevDisable = 'disabled' %}
   {% endif %}
-  <body class="text-center">
-    <div class="container">
-    <div class="row h-100">
-  <div class="col-sm-12 my-auto">
+<body class="text-center">
+  <div class="container">
     <h1>Mandelbrot Set</h1>
+    <article class="text-left my-4">
+      <p>The image below represents a fractal. One property of a fractal is that
+        it appears similar at all levels of magnification. Try magnifying sections
+        of the image to see repeating patterns. The image is only an approximation
+        of a Mandelbrot set. Precision is limited in order to generate images more quickly.
+        If you repeatedly magnify the image, patterns will eventually degrade due to
+        rounding errors in the software. Without the errors, the patterns would continue to
+        emerge.
+      </p>
+    </article>
     <div id='containment-wrapper'>
       <img src="{{ image }}"/>
-      <div id='selection-box' class='selector'>
+      <div id='selection-box' class='selector ui-widget-content'>
         <h2>Select area to enlarge</h2>
         <div class="spinner-grow mt-4" role="status">
           <span class="sr-only">Calculating...</span>
@@ -56,10 +64,9 @@
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
+      <p>Image {{ curPage+1 }} of {{ pages }}</p>
     </form>
-    </div>
-</div>
-</div>
+  </div>
 <script src='{{url_for('static', filename='js/custom.js')}}'></script>
 </body>
 </html>
