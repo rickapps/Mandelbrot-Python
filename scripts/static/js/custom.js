@@ -51,7 +51,7 @@ $(function() {
     });
 
     $('#containment-wrapper').on({
-      dblclick(){
+      dblclick: function() {
         $('#submit').click();
       }
     });
