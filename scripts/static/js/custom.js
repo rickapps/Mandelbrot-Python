@@ -50,6 +50,14 @@ $(function() {
       }
     });
 
+    // The double click event does not
+    // seem to bubble to the selection box
+    // when used on a touch screen.
+    // I have tried adding a double click
+    // handler to the selection box, but
+    // it still does not work on touch
+    // screen. Everything works as expected
+    // with the mouse.
     $('#containment-wrapper').on({
       dblclick: function() {
         $('#submit').click();
