@@ -1,7 +1,7 @@
 # Mandelbrot-Python
 Practice project for learning Flask, Jupyter Lab
 1. Convert image png to byte string
-2. JqueryUI draggable
+2. JqueryUI draggable - out of the box it does not work for touch screens, but there are work arounds
 3. Add to app engine on google cloud
 
 A website that displays a mandelbrot set and allows you to continually magnify sections of the plot to see the endless border detail. View website here:
