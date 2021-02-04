@@ -15,7 +15,7 @@
 
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 from mandelbrot import Mandelbrot
 
 app = Flask(__name__)
@@ -107,6 +107,8 @@ def plotSaved(num=0):
             yc=yc,
             xDomain=domain,
             image=thePlot)
+    else:
+            return redirect(url_for('plotView'))
 
 if __name__ == "__main__":
     app.run()
