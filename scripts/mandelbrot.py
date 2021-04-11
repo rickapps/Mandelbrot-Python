@@ -15,6 +15,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from PIL import Image
+import numpy as np
 import colorsys
 from io import BytesIO
 from base64 import b64encode
@@ -48,12 +49,23 @@ class Mandelbrot:
         self.setScale()
         return
 
+    def setColor(self, iterations):
+        # Get fraction of loop we completed. Higher values
+        # mean slower divergence
+        fraction = (iterations+1)/Mandelbrot._iterations
+        # We use HSV color model here. Then we convert it to rgb.
+        hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
+        rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(
+            hue, Mandelbrot._saturation, Mandelbrot._brightness))
+        return rgb
 
     def setScale(self):
         # Use aspect ratio to figure out yRange
         yRange = self.domain * Mandelbrot._imageHeight / Mandelbrot._imageLength 
         self.xMin = self.xc - self.domain/2.0
+        self.xMax = self.xMin + self.domain
         self.yMin = self.yc - yRange/2.0
+        self.yMax = self.yMin + yRange
         self.xScale = self.domain/Mandelbrot._imageLength
         self.yScale = -self.xScale #(Equivalent to: yRange/Mandelbrot._imageHeight)
         return
@@ -61,43 +73,32 @@ class Mandelbrot:
     def makeImage(self):
         # Initialize our image to black
         img = Image.new('RGB',(Mandelbrot._imageLength,Mandelbrot._imageHeight), color='black')
-        pixels = img.load()
+        Colors = []
+        for i in range(Mandelbrot._iterations + 1):
+            Colors.append(self.setColor(i))
 
-        # Loop through every pixel in the image
-        for row in range(Mandelbrot._imageHeight):
-            for col in range(Mandelbrot._imageLength):
-                # Convert to (x,y) coords. (row, col) starts at top left
-                # We want min (x,y) to be at bottom left
-                srow = row - (Mandelbrot._imageHeight - 1)
-                xComplex = self.xMin + col * self.xScale
-                yComplex = self.yMin + srow * self.yScale
-                # We are going to generate our series using this value as our constant.
-                # It is a complex number (a+bi) defined as (xComplex, yComplex)
-                # We will generate up to iterations terms of the series for
-                # each complex number. Note that (a+bi)**2 = a**2 + 2abi - b**2
-                x = xComplex # We need a starting value
-                y = yComplex # We need a starting value to generate next val in series
-                for i in range(Mandelbrot._iterations + 1):
-                    a = x*x - y*y # First generate (a+bi)**2 using previous (x,y)
-                    b = 2 * x * y
-                    x = a + xComplex  # New series values are old value squared plus
-                    y = b + yComplex  # our constant complex number.
-                    # Check if series is diverging
-                    if (x * x) + (y * y) > Mandelbrot._testDistance:
-                        break
+        # Get all our x values
+        xComplex = np.linspace(self.xMin, self.xMax, num=Mandelbrot._imageHeight) \
+            .reshape((1,Mandelbrot._imageHeight)) 
+        # Get our y values (imaginary) as a vector
+        yComplex = np.linspace(self.yMin, self.yMax, num=Mandelbrot._imageLength) \
+            .reshape((Mandelbrot._imageLength, 1))
+        # Stick the two together into a matrix
+        C = np.tile(xComplex, (Mandelbrot._imageLength, 1)) \
+            + 1j * np.tile(yComplex, (1, Mandelbrot._imageHeight))
+        # Now we have all the complex numbers for our image in an array
+        # where each position cooresponds to a pixel in our image
+        # We will iterate on each member to see if it converges or not
+        Z = np.zeros((Mandelbrot._imageLength, Mandelbrot._imageHeight), dtype=complex)
+        M = np.full((Mandelbrot._imageLength, Mandelbrot._imageHeight), True, dtype=bool)
+        # Make a record of our iterations. We will use this to make our image
+        I = np.zeros((Mandelbrot._imageLength,Mandelbrot._imageHeight,3), dtype=np.uint8)
+        for i in range(Mandelbrot._iterations + 1):
+            Z[M] = Z[M] * Z[M] + C[M]
+            M[np.abs(Z) > 2] = False
+            I[M] = Colors[i]
 
-                # If we exited the loop early, our series diverged
-                if i < Mandelbrot._iterations:
-                    # Get fraction of loop we completed. Higher values
-                    # mean slower divergence
-                    fraction = (i+1)/Mandelbrot._iterations
-                    # We use HSV color model here. Then we convert it to rgb.
-                    hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
-                    rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(
-                        hue, Mandelbrot._saturation, Mandelbrot._brightness))
-                    # Set the pixel to the color we calculated. We use row here instead
-                    # of srow so our image is not up-side-down.
-                    pixels[col,row] = rgb 
+        img = Image.fromarray(np.flipud(I))
         pngImage = BytesIO()
         img.save(pngImage, 'PNG')
         # Encode PNG image to base64 string
