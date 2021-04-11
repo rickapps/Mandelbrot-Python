@@ -52,7 +52,9 @@ class Mandelbrot:
     def setColor(self, iterations):
         # Get fraction of loop we completed. Higher values
         # mean slower divergence
-        fraction = (iterations+1)/Mandelbrot._iterations
+        if iterations >= Mandelbrot._iterations:
+            return (0,0,0)
+        fraction = (iterations)/Mandelbrot._iterations
         # We use HSV color model here. Then we convert it to rgb.
         hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
         rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(
