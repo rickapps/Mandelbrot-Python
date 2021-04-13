@@ -97,8 +97,10 @@ class Mandelbrot:
         I = np.zeros((Mandelbrot._imageLength,Mandelbrot._imageHeight,3), dtype=np.uint8)
         for i in range(Mandelbrot._iterations + 1):
             Z[M] = Z[M] * Z[M] + C[M]
-            M[np.abs(Z) > 2] = False
+            # Set the colors before we set M. That way,
+            # the entire I gets initialized with Colors[0]
             I[M] = Colors[i]
+            M[np.abs(Z) > 2] = False
 
         img = Image.fromarray(np.flipud(I))
         pngImage = BytesIO()
