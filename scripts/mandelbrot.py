@@ -17,8 +17,12 @@
 from PIL import Image
 import numpy as np
 import colorsys
+import math
 from io import BytesIO
 from base64 import b64encode
+from mpmath import mp, mpf
+
+mp.dps = 30  # 30 decimal places — sufficient headroom for 8 deep zooms
 
 class Mandelbrot:
     'Create an image to plot for Mandelbrot set'
@@ -30,9 +34,9 @@ class Mandelbrot:
     _brightness = 1.0   # Color brightness 0 to 1.
 
     def __init__(self, xc, yc, domain):
-        self.xc = xc
-        self.yc = yc
-        self.domain = domain
+        self.xc = mpf(xc)
+        self.yc = mpf(yc)
+        self.domain = mpf(domain)
         # Calculate xMin, yMax, xScale, yScale
         self.setScale()
         return
@@ -52,9 +56,9 @@ class Mandelbrot:
     def setColor(self, iterations):
         # Get fraction of loop we completed. Higher values
         # mean slower divergence
-        if iterations >= Mandelbrot._iterations:
+        if iterations >= self.iterations:
             return (0,0,0)
-        fraction = (iterations)/Mandelbrot._iterations
+        fraction = iterations / self.iterations
         # We use HSV color model here. Then we convert it to rgb.
         hue = fraction   # Between 0 and 1. Progresses Red, Yellow, Green, Cyan, Blue, Magenta
         rgb = tuple(round(i*255) for i in colorsys.hsv_to_rgb(
@@ -63,27 +67,37 @@ class Mandelbrot:
 
     def setScale(self):
         # Use aspect ratio to figure out yRange
-        yRange = self.domain * Mandelbrot._imageHeight / Mandelbrot._imageLength 
+        yRange = self.domain * Mandelbrot._imageHeight / Mandelbrot._imageLength
         self.xMin = self.xc - self.domain/2.0
         self.xMax = self.xMin + self.domain
         self.yMin = self.yc - yRange/2.0
         self.yMax = self.yMin + yRange
         self.xScale = self.domain/Mandelbrot._imageLength
         self.yScale = -self.xScale #(Equivalent to: yRange/Mandelbrot._imageHeight)
+        # Deeper zooms reveal finer boundary structure, where points need more
+        # iterations to determine whether they diverge. A fixed count leaves
+        # deep views blocky because too many distinct escape rates collapse to
+        # the same color. We scale logarithmically with zoom depth: each time
+        # the domain halves (one "octave" of zoom), iterations increase by the
+        # base count. log2(3.4/domain + 1) evaluates to 1 at the initial domain
+        # of 3.4, so the formula returns exactly _iterations there and grows
+        # smoothly from that baseline as domain shrinks. (At least according to Claude Code.)
+        self.iterations = max(Mandelbrot._iterations,
+            int(Mandelbrot._iterations * math.log2(3.4 / float(self.domain) + 1)))
         return
 
     def makeImage(self):
         # Initialize our image to black
         img = Image.new('RGB',(Mandelbrot._imageLength,Mandelbrot._imageHeight), color='black')
         Colors = []
-        for i in range(Mandelbrot._iterations + 1):
+        for i in range(self.iterations + 1):
             Colors.append(self.setColor(i))
 
         # Get all our x values
-        xComplex = np.linspace(self.xMin, self.xMax, num=Mandelbrot._imageHeight) \
-            .reshape((1,Mandelbrot._imageHeight)) 
+        xComplex = np.linspace(float(self.xMin), float(self.xMax), num=Mandelbrot._imageHeight) \
+            .reshape((1,Mandelbrot._imageHeight))
         # Get our y values (imaginary) as a vector
-        yComplex = np.linspace(self.yMin, self.yMax, num=Mandelbrot._imageLength) \
+        yComplex = np.linspace(float(self.yMin), float(self.yMax), num=Mandelbrot._imageLength) \
             .reshape((Mandelbrot._imageLength, 1))
         # Stick the two together into a matrix
         C = np.tile(xComplex, (Mandelbrot._imageLength, 1)) \
@@ -95,7 +109,7 @@ class Mandelbrot:
         M = np.full((Mandelbrot._imageLength, Mandelbrot._imageHeight), True, dtype=bool)
         # Make a record of our iterations. We will use this to make our image
         I = np.zeros((Mandelbrot._imageLength,Mandelbrot._imageHeight,3), dtype=np.uint8)
-        for i in range(Mandelbrot._iterations + 1):
+        for i in range(self.iterations + 1):
             Z[M] = Z[M] * Z[M] + C[M]
             # Set the colors before we set M. That way,
             # the entire I gets initialized with Colors[0]

@@ -59,9 +59,9 @@ def plotView():
 
         # Create our image and store the params used to make it
         thePlot = plot.makeImage()
-        xc = plot.xc
-        yc = plot.yc
-        domain = plot.domain
+        xc = float(plot.xc)
+        yc = float(plot.yc)
+        domain = float(plot.domain)
         page = session['page'] + 1
         manageSession(page, xc, yc, domain)
     else:
