@@ -1,6 +1,6 @@
 # Mandelbrot-Python
 
-Interactive Mandelbrot set viewer built with Flask. Users drag a selection box over the rendered image to zoom into any region. Deployed at https://rickapps.pythonanywhere.com.
+Interactive Mandelbrot set viewer built with Flask. Users drag a selection box over the rendered image to zoom into any region. Deployed at https://fractal.rickapps.com.
 
 ## Project layout
 
@@ -9,7 +9,6 @@ scripts/
   main.py            # Flask routes
   mandelbrot.py      # Image generation class
   requirements.txt   # Pillow, numpy, flask, mpmath
-  app.yaml           # Google App Engine config (Python 3.7, HTTPS-only)
   templates/
     index.html       # Bootstrap 4 UI with jQuery UI draggable selection box
   static/
@@ -67,8 +66,9 @@ Note: `ycenter` increases downward in pixel space but the Mandelbrot y-axis incr
 
 ## Deployment
 
-- **pythonanywhere**: primary deployment target
-- **Google App Engine**: `app.yaml` present; requires Python 3.7 runtime
+Self-hosted at https://fractal.rickapps.com. Live files are at `/home/rickapps/NASDrive/vhosts/mandelbrot`, which is **not** a git checkout: it holds the contents of `scripts/` copied in flat (no `scripts/` directory), with its own `.venv`. Deploy by copying `scripts/*` there, installing requirements into that `.venv`, and making sure `GA_MEASUREMENT_ID` is set in the server environment.
+
+Earlier deployments (PythonAnywhere, Google Cloud) are retired.
 
 ## Git
 
