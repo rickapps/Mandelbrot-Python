@@ -2,6 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    {% if ga_id %}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{ ga_id }}');
+    </script>
+    {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Zoom in on Mandelbrot plots to see increasing detail. Interactive online viewer.">
     <meta name="author" content="rickapps.com">

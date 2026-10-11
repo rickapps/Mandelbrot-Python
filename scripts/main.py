@@ -15,12 +15,20 @@
 
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import os
 from flask import Flask, render_template, request, session, redirect, url_for
 from mandelbrot import Mandelbrot
 
 app = Flask(__name__)
 app.secret_key = 'MaNdElBrOtPlOt'
 _defaultImage = '/static/img/mandelbrot.png'
+# Google Analytics ID. Set only on the production server so local runs
+# and forks of this repo don't report to our analytics.
+_gaId = os.environ.get('GA_MEASUREMENT_ID')
+
+@app.context_processor
+def injectAnalytics():
+    return dict(ga_id=_gaId)
 
 def manageSession(page, xc, yc, domain):
     # Populate our session dictionary
