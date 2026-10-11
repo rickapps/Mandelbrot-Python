@@ -19,16 +19,22 @@ scripts/
     img/mandelbrot.png           # Pre-rendered default image (served statically for speed)
 jupyter/
   MandelbrotSet.ipynb  # Exploratory notebook
-.venv/               # Local virtual environment (Python 3.14)
+.venv/               # Local virtual environment (gitignored; create per machine)
 ```
 
 ## How to run locally
 
 ```bash
+# First time on a machine (.venv is gitignored):
+python3 -m venv .venv
+.venv/bin/pip install -r scripts/requirements.txt
+
 cd scripts
 source ../.venv/bin/activate
 flask run
 ```
+
+Set `GA_MEASUREMENT_ID` to enable the Google Analytics tag. Leave it unset locally; set it only on the production server.
 
 ## Architecture
 
@@ -66,7 +72,7 @@ Note: `ycenter` increases downward in pixel space but the Mandelbrot y-axis incr
 
 ## Git
 
-Always use signed commits (`git commit -S`). GPG key `D350434F87B6C363` is configured in global git config.
+Always use signed commits (`git commit -S`). Each development machine (desktop, laptop) has its own GPG key set as `user.signingkey` in its global git config, so commits may be signed by different keys.
 
 ## Known limitations / future work
 
