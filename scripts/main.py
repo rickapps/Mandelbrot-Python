@@ -52,17 +52,20 @@ def plotView():
     # A post request means we are enlarging an area of the
     # previous plot.
     if request.method == 'POST':
-        # Initialize our plot object
         xc = request.form.get("xc", type=float)
         yc = request.form.get("yc", type=float)
         domain = request.form.get("xDomain", type=float)
-        plot = Mandelbrot(xc, yc, domain)
-
-        # Zoom in on the plot area requested
         xcorner = request.form.get("xtopLeft", type=float)
         ycorner = request.form.get("ytopLeft", type=float)
         xcenter = request.form.get("xcenter", type=float)
         ycenter = request.form.get("ycenter", type=float)
+        # Start over with the default plot if the session has expired
+        # (e.g. browser restarted) or the form values are missing or invalid
+        if 'page' not in session or None in (xc, yc, domain, xcorner, ycorner, xcenter, ycenter):
+            return redirect(url_for('plotView'))
+
+        # Initialize our plot object and zoom in on the plot area requested
+        plot = Mandelbrot(xc, yc, domain)
         plot.zoom(xcorner, ycorner, xcenter, ycenter)
 
         # Create our image and store the params used to make it
@@ -95,7 +98,7 @@ def plotView():
 @app.route("/page/<int:num>", methods=["GET"])
 def plotSaved(num=0):
     # Use our sesssion variables to retrieve a previous plot
-    if num >= 0 and num < len(session['xc']):
+    if num >= 0 and num < len(session.get('xc', [])):
         # Update our page number and retrieve params
         session['page'] = num
         xc = session['xc'][num]
