@@ -35,7 +35,7 @@ flask --app main run
 
 `--app main` is needed because Flask only auto-discovers `app.py` or `wsgi.py`.
 
-Set `GA_MEASUREMENT_ID` to enable the Google Analytics tag. Leave it unset locally; set it only on the production server.
+Set `GA_MEASUREMENT_ID` (environment variable, or in `scripts/settings.cfg`) to enable the Google Analytics tag. Leave it unset locally; set it only on the production server.
 
 ## Architecture
 
@@ -68,7 +68,9 @@ Note: `ycenter` increases downward in pixel space but the Mandelbrot y-axis incr
 
 ## Deployment
 
-Self-hosted at https://fractal.rickapps.com. Live files are at `/home/rickapps/NASDrive/vhosts/mandelbrot`, which is **not** a git checkout: it holds the contents of `scripts/` copied in flat (no `scripts/` directory), with its own `.venv`. Deploy by copying `scripts/*` there, installing requirements into that `.venv`, and making sure `GA_MEASUREMENT_ID` is set in the server environment.
+Self-hosted at https://fractal.rickapps.com. Live files are at `/home/rickapps/NASDrive/vhosts/mandelbrot`, which is **not** a git checkout: it holds the contents of `scripts/` copied in flat (no `scripts/` directory), with its own `.venv`. Deploy by copying `scripts/*` there, installing requirements into that `.venv`, and restarting the Python service in Web Station.
+
+The site runs under Synology Web Station's Python service (uWSGI). Web Station regenerates its uWSGI config, so environment variables can't be set there durably. Instead, the deploy folder has a `settings.cfg` (gitignored, never in the repo, so copying `scripts/*` won't overwrite it) containing `GA_MEASUREMENT_ID = '...'`. `main.py` loads it with `app.config.from_pyfile`; an environment variable takes precedence if set.
 
 Earlier deployments (PythonAnywhere, Google Cloud) are retired.
 

@@ -23,8 +23,11 @@ app = Flask(__name__)
 app.secret_key = 'MaNdElBrOtPlOt'
 _defaultImage = '/static/img/mandelbrot.png'
 # Google Analytics ID. Set only on the production server so local runs
-# and forks of this repo don't report to our analytics.
-_gaId = os.environ.get('GA_MEASUREMENT_ID')
+# and forks of this repo don't report to our analytics. It can come from
+# the environment or from settings.cfg next to main.py (gitignored), since
+# Synology Web Station regenerates its uWSGI config.
+app.config.from_pyfile('settings.cfg', silent=True)
+_gaId = os.environ.get('GA_MEASUREMENT_ID') or app.config.get('GA_MEASUREMENT_ID')
 
 @app.context_processor
 def injectAnalytics():

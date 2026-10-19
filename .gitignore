@@ -9,6 +9,8 @@ __pycache__/
 
 # Flask stuff:
 instance/
+# Production-only settings (e.g. GA_MEASUREMENT_ID), kept on the server
+scripts/settings.cfg
 .webassets-cache
 
 # Jupyter Notebook
