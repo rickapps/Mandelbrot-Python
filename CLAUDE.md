@@ -30,8 +30,10 @@ python3 -m venv .venv
 
 cd scripts
 source ../.venv/bin/activate
-flask run
+flask --app main run
 ```
+
+`--app main` is needed because Flask only auto-discovers `app.py` or `wsgi.py`.
 
 Set `GA_MEASUREMENT_ID` to enable the Google Analytics tag. Leave it unset locally; set it only on the production server.
 
@@ -58,7 +60,7 @@ Session values are stored as plain Python `float` (not `mpf`) because Flask sess
 ### Zoom flow
 
 1. User drags the selection box in the browser
-2. `custom.js` populates hidden form fields: `xtopLeft`, `ytopLeft`, `xcenter`, `ycenter` (all in pixels relative to the image)
+2. On submit, `custom.js` populates hidden form fields: `xtopLeft`, `ytopLeft`, `xcenter`, `ycenter`. The image scales with the screen (responsive CSS, max 720px wide, 4:3), so the selection box position is converted to pixels of the full size 720x540 image. y is measured from the bottom of the image, negative going up
 3. POST to `/` — `main.py` reads the previous center/domain from the form, constructs `Mandelbrot`, calls `zoom()`, then `makeImage()`
 4. New base64 image and updated center/domain are passed to the template as the next state
 
