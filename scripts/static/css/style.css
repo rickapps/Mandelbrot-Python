@@ -1,13 +1,11 @@
 :root {
-  /* If pic aspect ratio changes from 4/3 you should also change mandelbrot.py */
-  --picHeight: 540px;
-  --picWidth: 720px;
-  --selectHeight: 180px;
-  --selectWidth: 240px;
-  /* Position the top left of selection box here */
-  /* to center it over our pic                   */
-  --xcenter: 240px;     /* 0 + 720/2 - 240/2 = 240 */
-  --ycenter: -360px;    /* -540 + 540/2 - 180/2 = -360 */
+  /* If pic dims change from 720x540 you should also change mandelbrot.py */
+  --picMaxWidth: 720px;
+  --picAspect: 4 / 3;
+  /* Selection box is 1/3 of the pic in each direction, */
+  /* centered: 1/2 - 1/3/2 = 1/3                        */
+  --selectSize: calc(100% / 3);
+  --selectOffset: calc(100% / 3);
 }
 
 html {
@@ -28,17 +26,20 @@ body {
 }
 
 #containment-wrapper {
+  position: relative;
   margin: 0 auto;
   padding: 0px; 
   background-color: green;
   cursor:zoom-in;
-  width: var(--picWidth);
-  height: var(--picHeight); 
+  width: 100%;
+  max-width: var(--picMaxWidth);
+  aspect-ratio: var(--picAspect);
 }
 
 #containment-wrapper img {
-  width: var(--picWidth);
-  height: var(--picHeight);
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 #containment-wrapper h2 {
@@ -46,11 +47,11 @@ body {
 }
 
 .selector {
-  position: relative;
-  left: var(--xcenter);
-  top: var(--ycenter);
-  width: var(--selectWidth); 
-  height: var(--selectHeight); 
+  position: absolute;
+  left: var(--selectOffset);
+  top: var(--selectOffset);
+  width: var(--selectSize); 
+  height: var(--selectSize); 
   margin: 0; 
   border:2px; 
   border-style: dotted; 
@@ -64,3 +65,15 @@ body {
   height: 8rem;  
 }
 
+/* Selection box is too small on phones for the full size text and spinner */
+@media (max-width: 575.98px) {
+  #containment-wrapper h2 {
+    font-size: 1rem;
+  }
+
+  #selection-box .spinner-grow {
+    width: 3rem;
+    height: 3rem;
+    margin-top: .5rem !important;
+  }
+}

@@ -26,7 +26,7 @@ mp.dps = 30  # 30 decimal places — sufficient headroom for 8 deep zooms
 
 class Mandelbrot:
     'Create an image to plot for Mandelbrot set'
-    _imageLength = 720  # Image length in pixels. Change css if you change dims
+    _imageLength = 720  # Image length in pixels. Change css if you change dims or aspect ratio
     _imageHeight = 540  # Image height in pixels.
     _iterations = 100   # Length of series to generate to test for convergence
     _testDistance = 4   # Used to test for convergence
@@ -93,22 +93,23 @@ class Mandelbrot:
         for i in range(self.iterations + 1):
             Colors.append(self.setColor(i))
 
-        # Get all our x values
-        xComplex = np.linspace(float(self.xMin), float(self.xMax), num=Mandelbrot._imageHeight) \
-            .reshape((1,Mandelbrot._imageHeight))
-        # Get our y values (imaginary) as a vector
-        yComplex = np.linspace(float(self.yMin), float(self.yMax), num=Mandelbrot._imageLength) \
-            .reshape((Mandelbrot._imageLength, 1))
+        # Get all our x values. Arrays are indexed [row, column], so
+        # x varies along the columns (image length)
+        xComplex = np.linspace(float(self.xMin), float(self.xMax), num=Mandelbrot._imageLength) \
+            .reshape((1,Mandelbrot._imageLength))
+        # Get our y values (imaginary) as a vector. y varies down the rows
+        yComplex = np.linspace(float(self.yMin), float(self.yMax), num=Mandelbrot._imageHeight) \
+            .reshape((Mandelbrot._imageHeight, 1))
         # Stick the two together into a matrix
-        C = np.tile(xComplex, (Mandelbrot._imageLength, 1)) \
-            + 1j * np.tile(yComplex, (1, Mandelbrot._imageHeight))
+        C = np.tile(xComplex, (Mandelbrot._imageHeight, 1)) \
+            + 1j * np.tile(yComplex, (1, Mandelbrot._imageLength))
         # Now we have all the complex numbers for our image in an array
         # where each position cooresponds to a pixel in our image
         # We will iterate on each member to see if it converges or not
-        Z = np.zeros((Mandelbrot._imageLength, Mandelbrot._imageHeight), dtype=complex)
-        M = np.full((Mandelbrot._imageLength, Mandelbrot._imageHeight), True, dtype=bool)
+        Z = np.zeros((Mandelbrot._imageHeight, Mandelbrot._imageLength), dtype=complex)
+        M = np.full((Mandelbrot._imageHeight, Mandelbrot._imageLength), True, dtype=bool)
         # Make a record of our iterations. We will use this to make our image
-        I = np.zeros((Mandelbrot._imageLength,Mandelbrot._imageHeight,3), dtype=np.uint8)
+        I = np.zeros((Mandelbrot._imageHeight,Mandelbrot._imageLength,3), dtype=np.uint8)
         for i in range(self.iterations + 1):
             Z[M] = Z[M] * Z[M] + C[M]
             # Set the colors before we set M. That way,

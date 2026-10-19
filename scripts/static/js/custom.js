@@ -21,17 +21,32 @@ $(function() {
       stop: function( event, ui ) {}
     });
 
-    // Tried setting the fields on form submit, but position() values
-    // don't seem to be accurate. Not sure why, perhaps not recognizing
-    // parent div?.
+    // The image scales to fit the screen, but the server works in
+    // pixels of the full size image. Convert the selection box position
+    // to image pixels. The server expects y measured from the bottom
+    // of the image, negative going up.
+    function setZoomFields() {
+      var wrapper = $('#containment-wrapper');
+      var box = $('#selection-box');
+      var img = $('#containment-wrapper img')[0];
+      var scale = img.naturalWidth / wrapper.width();
+      var left = parseFloat(box.css('left'));
+      var top = parseFloat(box.css('top'));
+      $('#xtopLeft').val(left * scale);
+      $('#ytopLeft').val(top * scale - img.naturalHeight);
+      $('#xcenter').val((left + box.outerWidth()/2) * scale);
+      $('#ycenter').val((top + box.outerHeight()/2) * scale - img.naturalHeight);
+    }
+
     $("#selection-box").on({
       dragstop: function( event, ui ) {
-        // ui contains position and offset. Position is relative to the containment-wrapper
-        // We need the size of the selection-box so we can calculate cx,cy, and domain
-        $('#xtopLeft').val(ui.position.left);
-        $('#ytopLeft').val(ui.position.top);
-        $('#xcenter').val(ui.position.left + $(this).outerWidth()/2);
-        $('#ycenter').val(ui.position.top + $(this).outerHeight()/2);
+        // Store the position as a percentage so the box stays put
+        // over the same area if the image is resized (e.g. phone rotated)
+        var wrapper = $('#containment-wrapper');
+        $(this).css({
+          left: (ui.position.left / wrapper.width() * 100) + '%',
+          top: (ui.position.top / wrapper.height() * 100) + '%'
+        });
       },
       mouseenter: function(){
         $("#selection-box h2").show();
@@ -43,6 +58,7 @@ $(function() {
 
     $('#submit').on ({
       click: function(e) {
+        setZoomFields();
         $('#containment-wrapper').off();
         $('#selection-box').off();
         $('#selection-box h2').hide();
@@ -74,15 +90,7 @@ $(function() {
       $('.spinner-grow').show();
     });
 
-    // To be done on document ready. Using css to get
-    // values as position method does not seem to be accurate.
-    var box = $('#selection-box');
-    var left = parseInt(box.css('left'));
-    var top = parseInt(box.css('top'));
-    $('#xtopLeft').val(left);
-    $('#ytopLeft').val(top);
-    $('#xcenter').val(left + box.outerWidth()/2);
-    $('#ycenter').val(top + box.outerHeight()/2);
+    // To be done on document ready.
     $("#selection-box h2").hide();
     $('.spinner-grow').hide();
   });
